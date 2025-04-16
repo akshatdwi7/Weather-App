@@ -66,3 +66,38 @@ function displayError(message) {
   card.style.display = "flex";
   card.appendChild(errorDisplay);
 }
+
+// Select elements
+const eventForm = document.querySelector(".eventForm");
+const eventInput = document.querySelector(".eventInput");
+const eventList = document.querySelector(".eventList");
+
+// Add event listener to the form
+eventForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const eventText = eventInput.value.trim();
+
+  if (eventText) {
+    addEvent(eventText);
+    eventInput.value = ""; // Clear input field
+  }
+});
+
+// Function to add an event
+function addEvent(eventText) {
+  const eventItem = document.createElement("li");
+  eventItem.classList.add("eventItem");
+
+  const eventContent = document.createElement("span");
+  eventContent.textContent = eventText;
+
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "❌";
+  deleteButton.addEventListener("click", () => {
+    eventItem.remove();
+  });
+
+  eventItem.appendChild(eventContent);
+  eventItem.appendChild(deleteButton);
+  eventList.appendChild(eventItem);
+}

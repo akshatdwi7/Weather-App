@@ -1,14 +1,20 @@
-// 869bb6d9527a7c9257f4e0a64336b85d api key
+// API Key for OpenWeatherMap
+const apiKey = "869bb6d9527a7c9257f4e0a64336b85d";
 
-
+// Select elements for weather functionality
 const weatherForm = document.querySelector(".weatherForm");
 const cityInput = document.querySelector(".cityInput");
 const card = document.querySelector(".card");
-const apiKey = "869bb6d9527a7c9257f4e0a64336b85d";
 
+// Select elements for event planner functionality
+const eventForm = document.querySelector(".eventForm");
+const eventInput = document.querySelector(".eventInput");
+const eventList = document.querySelector(".eventList");
+
+// Weather functionality
 weatherForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const city = cityInput.value;
+  const city = cityInput.value.trim();
 
   if (city) {
     try {
@@ -25,30 +31,11 @@ weatherForm.addEventListener("submit", async (event) => {
 async function getWeatherData(city) {
   const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
   const response = await fetch(apiUrl);
-  
+
   if (!response.ok) {
     throw new Error("City not found");
   }
   return await response.json();
-}
-
-function getWeatherEmoji(weatherId) {
-  if (weatherId >= 200 && weatherId < 300) {
-    return "⛈️";
-  } else if (weatherId >= 300 && weatherId < 400) {
-    return "🌧️";
-  } else if (weatherId >= 500 && weatherId < 600) {
-    return "🌧️";
-  } else if (weatherId >= 600 && weatherId < 700) {
-    return "❄️";
-  } else if (weatherId >= 700 && weatherId < 800) {
-    return "🌫️";
-  } else if (weatherId === 800) {
-    return "☀️";
-  } else if (weatherId > 800) {
-    return "☁️";
-  }
-  return "❓";
 }
 
 function displayWeatherInfo(data) {
@@ -57,21 +44,21 @@ function displayWeatherInfo(data) {
     main: { temp, humidity },
     weather: [{ description, id }],
   } = data;
-  
+
   card.textContent = "";
   card.style.display = "flex";
-  
+
   const cityDisplay = document.createElement("h1");
   const tempDisplay = document.createElement("p");
   const humidityDisplay = document.createElement("p");
   const descDisplay = document.createElement("p");
   const weatherEmoji = getWeatherEmoji(id);
-  
+
   cityDisplay.textContent = city;
   tempDisplay.textContent = `Temperature: ${Math.round(temp)}°C`;
   humidityDisplay.textContent = `Humidity: ${humidity}%`;
   descDisplay.textContent = `${weatherEmoji} ${description}`;
-  
+
   card.appendChild(cityDisplay);
   card.appendChild(tempDisplay);
   card.appendChild(humidityDisplay);
@@ -81,6 +68,17 @@ function displayWeatherInfo(data) {
   tempDisplay.classList.add("tempDisplay");
   humidityDisplay.classList.add("humidityDisplay");
   descDisplay.classList.add("descDisplay");
+}
+
+function getWeatherEmoji(weatherId) {
+  if (weatherId >= 200 && weatherId < 300) return "⛈️"; // Thunderstorm
+  if (weatherId >= 300 && weatherId < 400) return "🌧️"; // Drizzle
+  if (weatherId >= 500 && weatherId < 600) return "🌧️"; // Rain
+  if (weatherId >= 600 && weatherId < 700) return "❄️"; // Snow
+  if (weatherId >= 700 && weatherId < 800) return "🌫️"; // Atmosphere
+  if (weatherId === 800) return "☀️"; // Clear
+  if (weatherId > 800) return "☁️"; // Clouds
+  return "❓"; // Default
 }
 
 function displayError(message) {
@@ -93,3 +91,31 @@ function displayError(message) {
   card.appendChild(errorDisplay);
 }
 
+// Event planner functionality
+eventForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const eventText = eventInput.value.trim();
+
+  if (eventText) {
+    addEvent(eventText);
+    eventInput.value = ""; // Clear input field
+  }
+});
+
+function addEvent(eventText) {
+  const eventItem = document.createElement("li");
+  eventItem.classList.add("eventItem");
+
+  const eventContent = document.createElement("span");
+  eventContent.textContent = eventText;
+
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "X";
+  deleteButton.addEventListener("click", () => {
+    eventItem.remove();
+  });
+
+  eventItem.appendChild(eventContent);
+  eventItem.appendChild(deleteButton);
+  eventList.appendChild(eventItem);
+}
