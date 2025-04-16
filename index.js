@@ -9,9 +9,13 @@ const card = document.querySelector(".card");
 // Select elements for event planner functionality
 const eventForm = document.querySelector(".eventForm");
 const eventInput = document.querySelector(".eventInput");
+const eventDateInput = document.querySelector(".eventDateInput");
 const eventList = document.querySelector(".eventList");
 
 // Weather functionality
+
+// Select the login form
+
 weatherForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const city = cityInput.value.trim();
@@ -95,22 +99,26 @@ function displayError(message) {
 eventForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const eventText = eventInput.value.trim();
+  const eventDate = eventDateInput.value;
 
-  if (eventText) {
-    addEvent(eventText);
+  if (eventText && eventDate) {
+    addEvent(eventText, eventDate);
     eventInput.value = ""; // Clear input field
+    eventDateInput.value = ""; // Clear date field
+  } else {
+    alert("Please enter both an event and a date.");
   }
 });
 
-function addEvent(eventText) {
+function addEvent(eventText, eventDate) {
   const eventItem = document.createElement("li");
   eventItem.classList.add("eventItem");
 
   const eventContent = document.createElement("span");
-  eventContent.textContent = eventText;
+  eventContent.textContent = `${eventText} - ${formatDate(eventDate)}`;
 
   const deleteButton = document.createElement("button");
-  deleteButton.textContent = "X";
+  deleteButton.textContent = "❌";
   deleteButton.addEventListener("click", () => {
     eventItem.remove();
   });
@@ -118,4 +126,9 @@ function addEvent(eventText) {
   eventItem.appendChild(eventContent);
   eventItem.appendChild(deleteButton);
   eventList.appendChild(eventItem);
+}
+
+function formatDate(dateString) {
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return new Date(dateString).toLocaleDateString(undefined, options);
 }
